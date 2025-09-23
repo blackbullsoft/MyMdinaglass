@@ -3968,3 +3968,6 @@ form-check-input:checked[type="checkbox"] {
   border-radius: 4px;
   font-family: "Raleway", sans-serif;
 }
+input[type="checkbox"].custom-checkbox-untick {
+  width: 25px !important;
+}

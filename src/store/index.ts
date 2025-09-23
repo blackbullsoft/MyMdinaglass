@@ -98,7 +98,7 @@ export const useCartStore = create<CartState>()(
         cartTotal: state.cartTotal,
         allCart: state.allCart,
       }),
-      // skipHydration: true,
+      // skipHydratison: true,
       // skipHydration: true, // optional: to avoid hydration mismatch in SSR apps
     }
   )

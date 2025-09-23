@@ -150,7 +150,7 @@ const AddToCart = ({ localCart }) => {
         }
         if (data?.data) setShippingRate(data?.data);
         setShippingStore(data?.data);
-        insrunaceRate();
+        insrunaceRate(code);
         if (data?.data?.Messages?.length > 0) {
           console.log("Datadatadata", data?.data);
           CustomToast(data?.data?.Messages[0], "top-right");
@@ -162,10 +162,16 @@ const AddToCart = ({ localCart }) => {
     }
     // console.log("Shipping Rate", data);
   };
-  const insrunaceRate = async () => {
+  const insrunaceRate = async (code) => {
+    console.log("countryCodecode", countryCode, code);
     setNavigating(true);
     if (voucherInCart == 1) {
       setInsurance(0);
+      return;
+    }
+    if (code === "MT") {
+      setInsurance(0);
+      setNavigating(false);
       return;
     }
     if (Object.keys(shippingStore)?.length > 0 && shippingStore?.Value) {
@@ -181,6 +187,7 @@ const AddToCart = ({ localCart }) => {
 
         console.log("percentcost", percentcost);
       } else {
+        console.log("Line number 191", countryCode, "countryCode");
         setInsurance(15);
         setNavigating(false);
       }
@@ -200,6 +207,8 @@ const AddToCart = ({ localCart }) => {
         setInsurance(percentCost);
         setNavigating(false);
       } else {
+        console.log("Line number 213");
+
         setInsurance(15);
         setNavigating(false);
       }
@@ -235,7 +244,9 @@ const AddToCart = ({ localCart }) => {
   useEffect(() => {
     // setInsurance(15.0);
     getTotalWeight();
+
     insrunaceRate();
+
     const data = localStorage.getItem("token");
     const parseData = JSON.parse(data);
     if (parseData && voucherInCart != 1) {
@@ -260,6 +271,7 @@ const AddToCart = ({ localCart }) => {
   useEffect(() => {
     const data = localStorage.getItem("is_voucher");
     setVoucherInCart(data);
+    console.log("Is_voucher add to cart", data);
   }, []);
   // console.log("Cart Items", cart, shippingRate);
   // console.log("shippingStore", insurance);
@@ -280,6 +292,8 @@ const AddToCart = ({ localCart }) => {
 
   // console.log("insurance", localCart);
   // console.log("isNavigating", isNavigating);
+
+  console.log("setCountryCode", countryCode);
 
   return (
     <div className="container my-4">
@@ -457,7 +471,11 @@ const AddToCart = ({ localCart }) => {
 
               <div className="form-check font-quicksand mt-3">
                 <input
-                  className="form-check-input"
+                  style={{
+                    width: "25px",
+                  }}
+                  // className="custom-checkbox-untick form-check-input"
+                  className="form-check-input custom-checkbox-untick"
                   type="checkbox"
                   defaultChecked
                   onChange={() => {
