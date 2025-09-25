@@ -18,7 +18,7 @@ const SideMenuItem = ({
   const params = useParams();
   const allParams = useMemo(() => params?.params || [], [params]);
   const pathname = usePathname();
-  console.log("pathnameSideMenu", cateogoryParents);
+  // console.log("pathnameSideMenu", cateogoryParents);
 
   const priceIndex =
     !pathname.includes("search") && allParams.findIndex((p) => p === "price");
@@ -110,13 +110,13 @@ const SideMenuItem = ({
     localStorage.setItem("currentUrl", currentUrl);
     // console.log("currentUrl", currentUrl);
   };
-  console.log(
-    "subCategoriesSIdeMenu",
-    categoryIds,
-    fullPathToItem,
+  // console.log(
+  //   "subCategoriesSIdeMenu",
+  //   categoryIds,
+  //   fullPathToItem,
 
-    isExpanded
-  );
+  //   isExpanded
+  // );
   return (
     <li
       className={`mb-3 list-unstyled ${level === 1 ? "top-level-li" : ""}`}

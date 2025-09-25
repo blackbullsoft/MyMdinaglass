@@ -5,7 +5,7 @@ import { CustomToast } from "./CustomToast";
 import ModalPayment from "./ModalPayment";
 import { useNavigationStore } from "@/store/useNavigationstore";
 
-export default function TrustPaymentForm() {
+export default function TrustPaymentForm({ amount }) {
   const [token, setToken] = useState(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [show, setShow] = useState(false);
@@ -30,7 +30,8 @@ export default function TrustPaymentForm() {
           body: JSON.stringify({
             // amount: Math.round(amount * 100), // convert to minor units (€10.50 → 1050)
             // orderId, // pass your order reference
-            amount: "1",
+            // amount: "1",
+            amount: Math.round(parseFloat(amount) * 100),
           }),
         });
         const { token } = await res.json();
@@ -97,6 +98,7 @@ export default function TrustPaymentForm() {
     });
   }, [sdkReady, token]);
 
+  console.log("amount", JSON.stringify(amount));
   return (
     <div>
       <form

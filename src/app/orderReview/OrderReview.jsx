@@ -853,7 +853,7 @@ const OrderReview = () => {
           </div>
         </div>
       )}
-      <TrustPaymentForm />
+      <TrustPaymentForm amount={Number(GrandTotal).toFixed(2)} />
       {/* <button className="btn btn-cart btn-info text-white back-button">
         {loader ? (
           <div className="spinner-border text-white" role="status"></div>

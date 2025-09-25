@@ -97,7 +97,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
       );
       return;
     }
-    console.log("chooseSku", chooseSku, uniqueOptions?.length);
+    // console.log("chooseSku", chooseSku, uniqueOptions?.length);
     setLaoding(true);
     const tokenData = localStorage.getItem("token");
     const parsed = tokenData ? JSON.parse(tokenData) : null;
@@ -127,7 +127,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
       }
       setLaoding(false);
     } else {
-      console.log("quantity", quantity, productDetails);
+      // console.log("quantity", quantity, productDetails);
       const guestToken = localStorage.getItem("guestToken");
       addGuestCart(guestToken);
 
@@ -143,7 +143,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
       guestToken,
       productDetails?.categories[0]?.name.includes("Gift Vouchers")
     );
-    console.log("addCartGuest", data, guestToken);
+    // console.log("addCartGuest", data, guestToken);
 
     if (data?.status === 200) {
       SuccessToast("Item added to cart", "top-right");
@@ -158,7 +158,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
     setWishLoader(true);
 
     const response = await addItemWIshlist(sku);
-    console.log("addItemWishlist", response);
+    // console.log("addItemWishlist", response);
     if (response.status === 200) {
       SuccessToast("Item added to Wishlist", "top-right");
       setInWish(sku);
@@ -186,7 +186,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
           setInWish(productDetails?.sku);
         }
         // setProducts(response.data.wishlist);
-        console.log("Dataresponse", data);
+        // console.log("Dataresponse", data);
         localStorage.setItem(
           "wishlist",
           JSON.stringify(response?.data?.wishlist)
@@ -197,14 +197,14 @@ export default function ProductDetails({ productDetails, productDetail }) {
     }
   };
 
-  console.log(
-    "productDetails123",
-    // createImage(productDetails?.sku),
-    productDetails,
-    chooseSku,
-    cart,
-    wishLoader
-  );
+  // console.log(
+  //   "productDetails123",
+  //   // createImage(productDetails?.sku),
+  //   productDetails,
+  //   chooseSku,
+  //   cart,
+  //   wishLoader
+  // );
 
   useEffect(() => {
     if (productDetails?.sku) {
@@ -214,11 +214,11 @@ export default function ProductDetails({ productDetails, productDetail }) {
       setSelectedImage(productDetails?.sku);
       setSelectedData(productDetails);
       setSImpleImage(productDetails?.images[0]?.url);
-      console.log("INside Product details", productDetails?.sku);
+      // console.log("INside Product details", productDetails?.sku);
       getTheWistList();
     }
 
-    console.log("INside Product detail121s");
+    // console.log("INside Product detail121s");
   }, [productDetails]);
 
   const SelectedData = (type, sku) => {
@@ -229,7 +229,7 @@ export default function ProductDetails({ productDetails, productDetail }) {
       );
       // console.log("selectedOption", selectedOption);
       if (selectedOption) {
-        console.log(" ifElse fffff");
+        // console.log(" ifElse fffff");
 
         setSelectedData(selectedOption);
         // setImgSrc(createImage(selectedOption.sku));
@@ -274,10 +274,10 @@ export default function ProductDetails({ productDetails, productDetail }) {
 
     setVoucherError(newErrors);
 
-    console.log("Errors:", newErrors);
+    // console.log("Errors:", newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Validation passed ✅");
+      // console.log("Validation passed ✅");
       localStorage.setItem("voucherDetails", JSON.stringify(giftVoucher));
       addItemCart();
 
@@ -288,12 +288,12 @@ export default function ProductDetails({ productDetails, productDetail }) {
   useEffect(() => {
     const data = localStorage.getItem("is_voucher");
     const parse = JSON.parse(data);
-    console.log("parse data useffe", parse);
+    // console.log("parse data useffe", parse);
     setVoucherInCart(parse);
   }, []);
 
-  console.log("Selected Image,uniqueOptions", selectedData);
-  console.log("Voucher", giftVoucher);
+  // console.log("Selected Image,uniqueOptions", selectedData);
+  console.log("Voucher", productDetails);
   return (
     <div className="container bg-white mt-5 mb-5 py-3">
       {/* <div className="filter-are">
@@ -344,6 +344,9 @@ export default function ProductDetails({ productDetails, productDetail }) {
                   <Image
                     key={index}
                     src={src?.url || "/assets/nothere.png"}
+                    // src={
+                    //   "https://mdinaglass.blackbullsolution.com/storage/product-images/BUB-357-W3-SW-LIT.jpg"
+                    // }
                     alt={`Thumbnail ${index + 1}`}
                     width={100}
                     height={100}

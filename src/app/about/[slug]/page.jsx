@@ -1,100 +1,31 @@
-"use client";
-import { getSlider } from "@/api/CartApi";
-// import AboutContent from "@/components/AboutUs/AboutContent";
-import AboutSideMenu from "@/components/AboutUs/AboutSideMenu";
-import ParagraphSkeleton from "@/components/Skeleton/ParagraphSkeleton";
-import SimpleSlider from "@/components/TopSlider";
-import dynamic from "next/dynamic";
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-const AboutContent = dynamic(
-  () => import("@/components/AboutUs/AboutContent"),
-  {
-    ssr: false,
-    loading: () => (
-      <div style={{ height: 300 }}>
-        <ParagraphSkeleton />
-      </div>
-    ),
-  }
-);
-
-const page = () => {
-  const params = useParams();
-  const [imagesToUse, setImagesToUse] = useState([]);
-  const [sliderImage, setSliderImage] = useState([]);
-  const [sliderImageArray, setSliderImageArray] = useState([]);
-  const images = [
-    { src: "/assets/abotone.png" },
-    {
-      src: "/assets/abouttwo.png",
-    },
-    { src: "/assets/aboutthree.png" },
-    { src: "/assets/aboutfour.png" },
-  ];
-  const ourHistory = [
-    { src: "/assets/historyone.png" },
-    {
-      src: "/assets/historytwo.png",
-    },
-    { src: "/assets/historythree.png" },
-    { src: "/assets/historyfour.png" },
-    { src: "/assets/historyfive.png" },
-  ];
-
-  const glassMaker = [
-    { src: "/assets/glassmaker.png" },
-    {
-      src: "/assets/glassmakertwo.png",
-    },
-    { src: "/assets/glassmakerthree.png" },
-    { src: "/assets/glassmakerfour.png" },
-    { src: "/assets/glassmakerfive.png" },
-  ];
-
-  const getSiderImage = async () => {
-    const data = await getSlider(params.slug);
-    if (data?.status == 200) {
-      const response = JSON.parse(data?.data?.data[0]?.image);
-      setSliderImageArray(response);
-      console.log("Response", response);
-      setSliderImage(data?.data?.data[0]?.image_urls);
-    } else {
-      setSliderImage([]);
-    }
-    console.log("Data SLug", data?.data?.data);
+import AboutClient from "../[slug]/AboutClient";
+export async function generateMetadata({ params }) {
+  const titleMap = {
+    "about-mdina-glass": "A Family Tradition",
+    "our-history": "Our History",
+    "watch-the-glassmakers": "Watch the Glassmakers",
+    "about-mdina-glass": "About Mdina Glass",
   };
-  const familyTradtionImages = [{ src: "/assets/familytradition.jpg" }];
-  useEffect(() => {
-    getSiderImage();
-    if (params.slug === "a-family-tradition") {
-      setImagesToUse(familyTradtionImages);
-    } else if (params.slug === "our-history") {
-      setImagesToUse(ourHistory);
-    } else if (params.slug === "watch-the-glassmakers") {
-      setImagesToUse(glassMaker);
-    } else {
-      setImagesToUse(images);
-    }
-  }, [params.slug]);
-  console.log("Params in about page", sliderImage);
 
-  return (
-    <div className="InfoContainer ">
-      <SimpleSlider images={sliderImageArray} />
-      <div
-        style={{
-          flexDirection: "row",
-          display: "flex",
-          marginTop: "20px",
-          justifyContent: "center",
-        }}
-      >
-        <AboutSideMenu />
-        <AboutContent />
-      </div>
-    </div>
-  );
-};
+  const descriptionMap = {
+    "a-family-tradition":
+      "Discover the legacy of our family tradition in glassmaking.",
+    "our-history":
+      "Explore the rich history of our craftsmanship and innovation.",
+    "watch-the-glassmakers":
+      "Watch our skilled glassmakers in action and learn their techniques.",
+    "about-mdina-glass":
+      "Discover the legacy of our family tradition in glassmaking",
+  };
 
-export default page;
+  return {
+    title: titleMap[params.slug] || "About Us",
+    description:
+      descriptionMap[params.slug] ||
+      "Learn more about our company, values, and story.",
+  };
+}
+
+export default function Page({ params }) {
+  return <AboutClient slug={params.slug} />;
+}

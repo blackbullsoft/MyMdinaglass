@@ -75,7 +75,7 @@ const ProductShow = ({ productDetails }) => {
     );
   }
 
-  console.log("productDetails", imgSrcs);
+  // console.log("productDetails", imgSrcs);
   // console.log("productDetailsProductSHo", imgSrcs);
 
   return (

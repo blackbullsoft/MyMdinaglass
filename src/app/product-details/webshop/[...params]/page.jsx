@@ -1,133 +1,35 @@
-"use client";
-import React, { useEffect, useMemo, useState } from "react";
-import { useCartStore } from "@/store";
-import { useParams, useSearchParams } from "next/navigation";
 import { getProductByID } from "@/api/productApi";
-import { ProductLists } from "@/store/product";
-import dynamic from "next/dynamic";
-import ListingSkeleton from "@/components/Skeleton/ListingSkeleton";
+import ProductDetailPage from "../[...params]/ProductDetailPage";
 
-const ProductDetails = dynamic(() => import("@/components/ProductDetails"), {
-  ssr: true,
-  loading: () => <span className="visually-hidden">Loading...</span>,
-});
+// metadata function can still fetch product to set title/description
+export async function generateMetadata({ params }) {
+  const allParams = params?.params || [];
+  const id = allParams[allParams.length - 1];
 
-const ProductShow = dynamic(() => import("@/components/ProductShow"), {
-  ssr: true,
-  loading: () => <ListingSkeleton />,
-});
-
-const SideMenu = dynamic(() => import("@/components/SideMenu"), {
-  ssr: true,
-  loading: () => <span className="visually-hidden">Loading...</span>,
-});
-
-const page = () => {
-  const { heading, description } = ProductLists((state) => state);
-  const [productId, setProductId] = useState(null);
-  const [productDetails, setProductDetails] = useState();
-  const searchParams = useSearchParams();
-  const sku = searchParams.get("sku");
-
-  console.log("searchParams", searchParams);
-
-  const params = useParams();
-
-  console.log(
-    "paramsdsdsds",
-    params?.params[params.params.length - 1],
-    productId,
-    params.params.length
-  );
-  const getProductDetails = async (id) => {
-    // const data = await getProductByID(params?.productId);
+  let productDetails = null;
+  if (id) {
     const data = await getProductByID(id);
+    productDetails = data?.data?.product;
+  }
 
-    console.log("setProductDetails", data.data);
-    // if()
-    if (data?.status == 200) {
-      setProductDetails(data?.data?.product);
-      console.log("getProductDetails", data.data.product);
-    }
+  return {
+    title: productDetails?.name || "Product Details",
+    description:
+      productDetails?.description?.replace(/<[^>]*>/g, "").trim() ||
+      "Check out this product on our store",
   };
+}
 
-  useEffect(() => {
-    // getProductDetails();
-  }, []);
+// **server component page** to fetch productDetails
+export default async function Page({ params }) {
+  const allParams = params?.params || [];
+  const id = allParams[allParams.length - 1];
 
-  const getCateogryIDs = async () => {
-    const data = await getCategoryPath();
-  };
+  let productDetails = null;
+  if (id) {
+    const data = await getProductByID(id);
+    productDetails = data?.data?.product;
+  }
 
-  useEffect(() => {
-    const allParams = params?.params;
-    console.log("allParams", allParams);
-    if (Array.isArray(allParams) && allParams.length > 0) {
-      const id = allParams[params.params.length - 1];
-      setProductId(id);
-
-      getProductDetails(id);
-    }
-  }, [params]);
-  const allParams = useMemo(() => params?.params || [], [params]);
-
-  const sku1 = useMemo(() => allParams[allParams.length - 1], [allParams]);
-
-  console.log("ProductDetails098", params, allParams, sku1);
-  return (
-    <>
-      {/* <Header /> */}
-      {/* <MegaMenu /> */}
-
-      <div
-        style={{
-          background: "#f1f1f1",
-        }}
-      >
-        <div className="header-product bg-white">
-          <h1>{heading}</h1>
-          {description ? (
-            <p className="text-muted">
-              {" "}
-              {description
-                ?.replace(/<[^>]*>/g, "") // remove all HTML tags
-                .replace(/&nbsp;/g, " ") // replace &nbsp; with a space
-                .trim()}
-            </p>
-          ) : (
-            <h5>
-              We offer a selection of affordable contemporary costume jewellery
-              with glass beads.
-            </h5>
-          )}
-        </div>
-        <div className="container">
-          <div className="category-sidebar">
-            <div className="category-bg">
-              <div className="row  min-vh-100">
-                {/* Category Sidebar */}
-                <div className="col-lg-3 col-md-12  p-0">
-                  <SideMenu productDetails={productDetails} />
-                  {/* <CategorySidebar cateogryId={params?.productId} /> */}
-                </div>
-                {/* Product Listing */}
-                <div className="col-lg-9 col-md-12">
-                  <div className="container">
-                    <ProductDetails productDetails={productDetails} />
-                  </div>
-                  {productDetails?.range != null && (
-                    <ProductShow productDetails={productDetails} />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* <Footer/> */}
-    </>
-  );
-};
-
-export default page;
+  return <ProductDetailPage productDetailsProps={productDetails} />;
+}
