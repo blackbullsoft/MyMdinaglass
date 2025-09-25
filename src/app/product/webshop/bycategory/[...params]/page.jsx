@@ -1,76 +1,47 @@
-"use client";
-import ProductHeading from "@/components/ProductHeading";
-import ListingSkeleton from "@/components/Skeleton/ListingSkeleton";
-import SideMenuSkeleton from "@/components/Skeleton/SideMenuSkeleton";
+import { getProductByID, getProductCateogrybyId } from "@/api/productApi";
+import ProductListinPage from "../[...params]/ProductListinPage";
 
-import dynamic from "next/dynamic";
-import { useLinkStatus } from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-const SideMenu = dynamic(() => import("@/components/SideMenu"), {
-  ssr: true,
-  loading: () => (
-    <div>
-      <SideMenuSkeleton />
-      {/* <ParagraphSkeleton /> */}
-    </div>
-  ),
-});
+// metadata function can still fetch product to set title/description
+export async function generateMetadata({ params }) {
+  const allParams = params?.params || [];
 
-const ProductListing = dynamic(() => import("@/components/ProductListing"), {
-  ssr: true,
-  loading: () => <ListingSkeleton />,
-});
-ProductListing.preload?.();
-SideMenu.preload?.();
+  // find "price" keyword index
+  const priceIndex = allParams.findIndex((p) => p === "price");
 
-const ShopPage = () => {
-  const { pending } = useLinkStatus();
-  const pathname = usePathname();
+  // everything before "price" are category IDs
+  const categoryIds =
+    priceIndex !== -1 ? allParams.slice(0, priceIndex).map(Number) : [];
 
-  useEffect(() => {
-    const currentUrl = window.location.href;
+  // ✅ last category id
+  const lastId = categoryIds[categoryIds.length - 1];
 
-    // On first render or route change:
-    const prevUrl = localStorage.getItem("currentUrl");
-    if (prevUrl) {
-      localStorage.setItem("currentUrl", prevUrl); // Save old as previous
-    }
-    localStorage.setItem("currentUrl", currentUrl); // Save current
-  }, [pathname]); // run on every path change
+  console.log("ididid", lastId);
 
-  console.log("pending", pending);
-  return (
-    <>
-      {/* <Header /> */}
-      {/* <MegaMenu /> */}
-      <ProductHeading />
-      <div
-        style={{
-          background: "#f1f1f1",
-        }}
-      >
-        <div className="category-sidebar ">
-          <div className="container category-bg">
-            <div className="row  min-vh-100">
-              {/* Category Sidebar */}
+  let productDetails = null;
+  if (lastId) {
+    const data = await getProductCateogrybyId(lastId);
+    console.log("Data123232", data?.data?.main_category?.name);
+    productDetails = data?.data?.main_category;
+  }
 
-              <div className="col-lg-3 col-md-12 p-0">
-                {/* <CategorySidebar /> */}
-                <SideMenu />
-              </div>
-              {/* Product Listing */}
-              <div className="col-lg-9 col-md-12">
-                <ProductListing />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  return {
+    title: productDetails?.name || "Category Listing",
+    description:
+      productDetails?.description?.replace(/<[^>]*>/g, "").trim() ||
+      "Check out this product on our store",
+  };
+}
 
-      {/* <Footer /> */}
-    </>
-  );
-};
+// **server component page** to fetch productDetails
+export default async function Page({ params }) {
+  const allParams = params?.params || [];
+  const id = allParams[allParams.length - 1];
 
-export default ShopPage;
+  let productDetails = null;
+  if (id) {
+    const data = await getProductByID(id);
+    productDetails = data?.data?.product;
+  }
+
+  return <ProductListinPage />;
+}
