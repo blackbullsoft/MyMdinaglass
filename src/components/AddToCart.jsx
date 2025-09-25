@@ -167,6 +167,7 @@ const AddToCart = ({ localCart }) => {
     setNavigating(true);
     if (voucherInCart == 1) {
       setInsurance(0);
+      // code tocheck push
       return;
     }
     if (code === "MT") {
